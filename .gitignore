@@ -1,0 +1,9 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# Private Visual Studio files
+.vs/
+
+# Private Rider files
+.idea/
