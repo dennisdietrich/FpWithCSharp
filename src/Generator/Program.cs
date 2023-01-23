@@ -1,6 +1,7 @@
 ﻿#define OOP
 #define FP
 #define BENCHMARK
+#define SYNCHRONIZED
 
 using BenchmarkDotNet.Running;
 using Generator;
@@ -13,6 +14,14 @@ var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
 {
     Console.WriteLine($"Generating {iterations} times with {interval} seconds interval using object-oriented implementation...");
 
+#if SYNCHRONIZED
+    using ISynchronizedEnumerator<DateTime> times = TimeGenerator.CreateEnumerable(startTime, interval).GetSynchronizedEnumerator();
+    for (var i = 0; i < iterations; i++)
+    {
+        times.TryGetNext(out DateTime time);
+        Console.WriteLine($"{time:u}");
+    }
+#else
     using IEnumerator<DateTime> times = TimeGenerator.CreateEnumerable(startTime, interval).GetEnumerator();
     for (var i = 0; i < iterations; i++)
     {
@@ -20,6 +29,7 @@ var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
         Console.WriteLine($"{times.Current:u}");
         //Console.WriteLine($"{times.GetNext():u}");
     }
+#endif
 
     Console.WriteLine();
 }
@@ -29,16 +39,26 @@ var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
 {
     Console.WriteLine($"Generating {iterations} times with {interval} seconds interval using functional implementation...");
 
+#if SYNCHRONIZED
+    Func<DateTime> times = TimeGenerator.CreateFunction(startTime, interval).Synchronized();
+    for (var i = 0; i < iterations; i++)
+        Console.WriteLine($"{times():u}");
+#else
     Func<DateTime> times = TimeGenerator.CreateFunction(startTime, interval);
     for (var i = 0; i < iterations; i++)
         Console.WriteLine($"{times():u}");
+#endif
 
     Console.WriteLine();
 }
 #endif
 
 #if BENCHMARK
+#if SYNCHRONIZED
+BenchmarkRunner.Run<SynchronizedBenchmark>();
+#else
 BenchmarkRunner.Run<Benchmark>();
+#endif
 #endif
 
 #if !(OOP || FP || BENCHMARK)
