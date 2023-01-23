@@ -1,6 +1,8 @@
 ﻿#define OOP
 #define FP
+#define BENCHMARK
 
+using BenchmarkDotNet.Running;
 using Generator;
 
 const int iterations = 5;
@@ -11,7 +13,7 @@ var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
 {
     Console.WriteLine($"Generating {iterations} times with {interval} seconds interval using object-oriented implementation...");
 
-    using var times = TimeGenerator.CreateEnumerable(startTime, interval).GetEnumerator();
+    using IEnumerator<DateTime> times = TimeGenerator.CreateEnumerable(startTime, interval).GetEnumerator();
     for (var i = 0; i < iterations; i++)
     {
         times.MoveNext();
@@ -27,12 +29,18 @@ var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
 {
     Console.WriteLine($"Generating {iterations} times with {interval} seconds interval using functional implementation...");
 
-    var times = TimeGenerator.CreateFunction(startTime, interval);
+    Func<DateTime> times = TimeGenerator.CreateFunction(startTime, interval);
     for (var i = 0; i < iterations; i++)
         Console.WriteLine($"{times():u}");
+
+    Console.WriteLine();
 }
 #endif
 
-#if !(OOP || FP)
+#if BENCHMARK
+BenchmarkRunner.Run<Benchmark>();
+#endif
+
+#if !(OOP || FP || BENCHMARK)
 Console.WriteLine("Nothing to do...");
 #endif
