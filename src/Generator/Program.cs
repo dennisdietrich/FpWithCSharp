@@ -1,4 +1,5 @@
-﻿#define OOP
+﻿#define ENUMERATOR
+#define CUSTOM_GENERATOR
 #define FP
 #define BENCHMARK
 #define SYNCHRONIZED
@@ -10,9 +11,9 @@ const int iterations = 5;
 const int interval = 3;
 var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
 
-#if OOP
+#if ENUMERATOR
 {
-    Console.WriteLine($"Generating {iterations} times with {interval} seconds interval using object-oriented implementation...");
+    Console.WriteLine($"Generating {iterations} times with {interval} seconds interval using enumerator implementation...");
 
 #if SYNCHRONIZED
     using ISynchronizedEnumerator<DateTime> times = TimeGenerator.CreateEnumerable(startTime, interval).GetSynchronizedEnumerator();
@@ -28,6 +29,30 @@ var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
         times.MoveNext();
         Console.WriteLine($"{times.Current:u}");
         //Console.WriteLine($"{times.GetNext():u}");
+    }
+#endif
+
+    Console.WriteLine();
+}
+#endif
+
+#if CUSTOM_GENERATOR
+{
+    Console.WriteLine($"Generating {iterations} times with {interval} seconds interval using custom generator implementation...");
+
+#if SYNCHRONIZED
+    IGenerator<DateTime> times = new TimeGenerator(startTime, interval).Synchronized();
+    for (var i = 0; i < iterations; i++)
+    {
+        times.TryGetNext(out DateTime time);
+        Console.WriteLine($"{time:u}");
+    }
+#else
+    IGenerator<DateTime> times = new TimeGenerator(startTime, interval);
+    for (var i = 0; i < iterations; i++)
+    {
+        times.TryGetNext(out DateTime time);
+        Console.WriteLine($"{time:u}");
     }
 #endif
 
@@ -61,6 +86,6 @@ BenchmarkRunner.Run<Benchmark>();
 #endif
 #endif
 
-#if !(OOP || FP || BENCHMARK)
+#if !(ENUMERATOR || CUSTOM_GENERATOR || FP || BENCHMARK)
 Console.WriteLine("Nothing to do...");
 #endif
