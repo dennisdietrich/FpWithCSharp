@@ -1,12 +1,16 @@
-﻿namespace FunWithTracing
+﻿using Microsoft.Extensions.Logging;
+
+namespace FunWithTracing
 {
-    public sealed class HighLevelCallerNoTracing
+    public sealed class HighLevelCallerWithLogger
     {
-        private readonly LowLevelApiNoTracing _lowLevelApi = new();
+        private readonly LowLevelApiWithLogger _lowLevelApi = new();
+
+        public ILogger Logger { get; set; }
 
         public void Foo()
         {
-            foreach (var file in _lowLevelApi.GetExpiredFiles())
+            foreach (var file in _lowLevelApi.GetExpiredFiles(Logger))
                 ProcessExpiredFile(file);
         }
 
