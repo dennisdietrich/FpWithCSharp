@@ -5,7 +5,9 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator", "Generator\Generator.csproj", "{A9B5D8AB-48CB-4995-A1C9-7A59827C1657}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunWithTracing", "FunWithTracing\FunWithTracing.csproj", "{C21E4DCC-FCFB-4441-966E-B47E35AE167F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunWithTracing", "FunWithTracing\FunWithTracing.csproj", "{C21E4DCC-FCFB-4441-966E-B47E35AE167F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MethodCoreInjection", "MethodCoreInjection\MethodCoreInjection.csproj", "{BA0EBF1F-8D4B-4BEF-87B0-7836657DB1AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{C21E4DCC-FCFB-4441-966E-B47E35AE167F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C21E4DCC-FCFB-4441-966E-B47E35AE167F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C21E4DCC-FCFB-4441-966E-B47E35AE167F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA0EBF1F-8D4B-4BEF-87B0-7836657DB1AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA0EBF1F-8D4B-4BEF-87B0-7836657DB1AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA0EBF1F-8D4B-4BEF-87B0-7836657DB1AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA0EBF1F-8D4B-4BEF-87B0-7836657DB1AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
