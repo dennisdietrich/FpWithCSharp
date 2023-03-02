@@ -14,21 +14,13 @@ namespace MethodCoreInjection
         internal static void Main()
         {
             var session = new Session("Dennis Dietrich", "So you think you know functions");
-#if METHODS
+#if METHODS || FP
             WriteToJsonFile("session.json", session);
             WriteToTxtFile("session.txt", session);
 #endif
 #if TEMPLATE_METHOD_PATTERN
             new SessionJsonFile().CreateNew("session.json", session);
             new SessionTxtFile().CreateNew("session.txt", session);
-#endif
-#if FP
-            CreateNewFile("session.json", s => JsonSerializer.Serialize(s, session));
-            CreateNewFile("session.txt", s =>
-            {
-                using var streamWriter = new StreamWriter(s);
-                streamWriter.Write($"{session.Speaker}: {session.Title}");
-            });
 #endif
         }
 
@@ -39,6 +31,17 @@ namespace MethodCoreInjection
             File.SetAttributes(filename, FileAttributes.ReadOnly);
         }
 
+        private static void WriteToJsonFile(string filename, Session session) =>
+            CreateNewFile(filename, s => JsonSerializer.Serialize(s, session));
+
+        private static void WriteToTxtFile(string filename, Session session) =>
+            CreateNewFile(filename, s =>
+            {
+                using var streamWriter = new StreamWriter(s);
+                streamWriter.Write($"{session.Speaker}: {session.Title}");
+            });
+
+#if METHODS
         private static void WriteToJsonFile(string filename, Session session)
         {
             using var fileStream = new FileStream(filename, FileMode.CreateNew);
@@ -53,5 +56,6 @@ namespace MethodCoreInjection
             streamWriter.Write($"{session.Speaker}: {session.Title}");
             File.SetAttributes(filename, FileAttributes.ReadOnly);
         }
+#endif
     }
 }
