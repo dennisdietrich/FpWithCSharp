@@ -1,4 +1,5 @@
 ﻿#define FP
+#define WITH_EXCEPTION_HANDLING
 
 // Term "Method-Core Injection" coined by Ann Lewkowicz
 // http://www.annlewkowicz.com/2022/12/method-core-injection-c-pattern-for.html
@@ -18,12 +19,58 @@ namespace MethodCoreInjection
             WriteToJsonFile("session.json", session);
             WriteToTxtFile("session.txt", session);
 #endif
+
 #if TEMPLATE_METHOD_PATTERN
+#if WITH_EXCEPTION_HANDLING
+            new SessionJsonFileWithExceptionHandling().CreateNew("session.json", session);
+            new SessionTxtFileWithExceptionHandling().CreateNew("session.txt", session);
+#else
             new SessionJsonFile().CreateNew("session.json", session);
             new SessionTxtFile().CreateNew("session.txt", session);
 #endif
+#endif
         }
 
+#if WITH_EXCEPTION_HANDLING
+        private static void CreateNewFile(string filename, Action<FileStream> action, Func<IOException, bool>? handler = null)
+        {
+            try
+            {
+                using var fileStream = new FileStream(filename, FileMode.CreateNew);
+                action(fileStream);
+                File.SetAttributes(filename, FileAttributes.ReadOnly);
+            }
+            catch (IOException e) when (handler != null)
+            {
+                if (handler(e))
+                    throw;
+            }
+        }
+
+        private static void WriteToJsonFile(string filename, Session session) =>
+            CreateNewFile(
+                filename,
+                s => JsonSerializer.Serialize(s, session),
+                e =>
+                {
+                    Console.WriteLine(e);
+                    return false;
+                });
+
+        private static void WriteToTxtFile(string filename, Session session) =>
+            CreateNewFile(
+                filename,
+                s =>
+                {
+                    using var streamWriter = new StreamWriter(s);
+                    streamWriter.Write($"{session.Speaker}: {session.Title}");
+                },
+                e =>
+                {
+                    Console.WriteLine(e);
+                    return false;
+                });
+#else
         private static void CreateNewFile(string filename, Action<FileStream> action)
         {
             using var fileStream = new FileStream(filename, FileMode.CreateNew);
@@ -40,6 +87,7 @@ namespace MethodCoreInjection
                 using var streamWriter = new StreamWriter(s);
                 streamWriter.Write($"{session.Speaker}: {session.Title}");
             });
+#endif
 
 #if METHODS
         private static void WriteToJsonFile(string filename, Session session)
