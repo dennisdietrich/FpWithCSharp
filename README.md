@@ -1,5 +1,5 @@
 ## Presentation title
-So you think you know functions: An introduction to functional programming with C#
+Let's get Func<Y>: Adding functional programming to your OOP codebase
 
 ## Description
 All functions are equal.
