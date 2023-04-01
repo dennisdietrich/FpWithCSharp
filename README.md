@@ -1,5 +1,5 @@
 ## Presentation title
-Let's get Func<Y>: Adding functional programming to your OOP codebase
+Let's get `Func<Y>`: Adding functional programming to your OOP codebase
 
 ## Description
 All functions are equal.
