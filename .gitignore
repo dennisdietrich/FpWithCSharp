@@ -5,5 +5,9 @@
 # Private Visual Studio files
 .vs/
 
-# Private Rider files
+# Private Rider/ReSharper files
 .idea/
+*.DotSettings.user
+
+# macOS Finder
+.DS_Store
