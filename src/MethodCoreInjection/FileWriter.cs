@@ -2,25 +2,25 @@
 
 namespace MethodCoreInjection
 {
-    internal abstract class SessionFile
+    internal abstract class FileWriter<T>
     {
-        internal void CreateNew(string filename, Session session)
+        internal void CreateNew(string filename, T content)
         {
             using var fileStream = new FileStream(filename, FileMode.CreateNew);
-            CreateNewImpl(fileStream, session);
+            CreateNewImpl(fileStream, content);
             File.SetAttributes(filename, FileAttributes.ReadOnly);
         }
 
-        protected abstract void CreateNewImpl(FileStream fileStream, Session session);
+        protected abstract void CreateNewImpl(FileStream fileStream, T session);
     }
 
-    internal class SessionJsonFile : SessionFile
+    internal class SessionJsonFileWriter : FileWriter<Session>
     {
         protected override void CreateNewImpl(FileStream fileStream, Session session) =>
             JsonSerializer.Serialize(fileStream, session);
     }
 
-    internal class SessionTxtFile : SessionFile
+    internal class SessionTxtFileWriter : FileWriter<Session>
     {
         protected override void CreateNewImpl(FileStream fileStream, Session session)
         {
