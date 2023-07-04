@@ -14,13 +14,13 @@ namespace MethodCoreInjection
         protected abstract void CreateNewImpl(FileStream fileStream, T session);
     }
 
-    internal class SessionJsonFileWriter : FileWriter<Session>
+    internal sealed class SessionJsonFileWriter : FileWriter<Session>
     {
         protected override void CreateNewImpl(FileStream fileStream, Session session) =>
             JsonSerializer.Serialize(fileStream, session);
     }
 
-    internal class SessionTxtFileWriter : FileWriter<Session>
+    internal sealed class SessionTxtFileWriter : FileWriter<Session>
     {
         protected override void CreateNewImpl(FileStream fileStream, Session session)
         {

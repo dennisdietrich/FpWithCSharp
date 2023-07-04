@@ -1,5 +1,4 @@
-﻿#define FP
-#define WITH_EXCEPTION_HANDLING
+﻿#define METHODS
 
 // Term "Method-Core Injection" coined by Ann Lewkowicz
 // http://www.annlewkowicz.com/2022/12/method-core-injection-c-pattern-for.html
@@ -8,7 +7,7 @@ using System.Text.Json;
 
 namespace MethodCoreInjection
 {
-    public record Session(string Speaker, string Title);
+    public sealed record Session(string Speaker, string Title);
 
     internal static class Program
     {
@@ -22,15 +21,18 @@ namespace MethodCoreInjection
 
 #if TEMPLATE_METHOD_PATTERN
 #if WITH_EXCEPTION_HANDLING
-            new SessionJsonFileWithExceptionHandling().CreateNew("session.json", session);
-            new SessionTxtFileWithExceptionHandling().CreateNew("session.txt", session);
+            var handler = new IOExceptionHandler();
+
+            new SessionJsonFileWriterWithExceptionHandling { ExceptionHandler = handler }.CreateNew("session.json", session);
+            new SessionTxtFileWriterWithExceptionHandling { ExceptionHandler = handler }.CreateNew("session.txt", session);
 #else
-            new SessionJsonFile().CreateNew("session.json", session);
-            new SessionTxtFile().CreateNew("session.txt", session);
+            new SessionJsonFileWriter().CreateNew("session.json", session);
+            new SessionTxtFileWriter().CreateNew("session.txt", session);
 #endif
 #endif
         }
 
+#if FP
 #if WITH_EXCEPTION_HANDLING
         private static void CreateNewFile(string filename, Action<FileStream> action, Func<IOException, bool>? handler = null)
         {
@@ -87,6 +89,7 @@ namespace MethodCoreInjection
                 using var streamWriter = new StreamWriter(s);
                 streamWriter.Write($"{session.Speaker}: {session.Title}");
             });
+#endif
 #endif
 
 #if METHODS
