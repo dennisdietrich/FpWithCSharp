@@ -1,4 +1,5 @@
-﻿#define METHODS
+﻿#define FP
+#define WITH_EXCEPTION_HANDLING
 
 // Term "Method-Core Injection" coined by Ann Lewkowicz
 // http://www.annlewkowicz.com/2022/12/method-core-injection-c-pattern-for.html
@@ -23,10 +24,10 @@ namespace MethodCoreInjection
 #if WITH_EXCEPTION_HANDLING
             var handler = new IOExceptionHandler();
 
-            new SessionJsonFileWriterWithExceptionHandling { ExceptionHandler = handler }.CreateNew("session.json", session);
+            new JsonFileWriterWithExceptionHandling<Session> { ExceptionHandler = handler }.CreateNew("session.json", session);
             new SessionTxtFileWriterWithExceptionHandling { ExceptionHandler = handler }.CreateNew("session.txt", session);
 #else
-            new SessionJsonFileWriter().CreateNew("session.json", session);
+            new JsonFileWriter<Session>().CreateNew("session.json", session);
             new SessionTxtFileWriter().CreateNew("session.txt", session);
 #endif
 #endif
@@ -49,7 +50,7 @@ namespace MethodCoreInjection
             }
         }
 
-        private static void WriteToJsonFile(string filename, Session session) =>
+        private static void WriteToJsonFile<T>(string filename, T session) =>
             CreateNewFile(
                 filename,
                 s => JsonSerializer.Serialize(s, session),
@@ -80,7 +81,7 @@ namespace MethodCoreInjection
             File.SetAttributes(filename, FileAttributes.ReadOnly);
         }
 
-        private static void WriteToJsonFile(string filename, Session session) =>
+        private static void WriteToJsonFile<T>(string filename, T session) =>
             CreateNewFile(filename, s => JsonSerializer.Serialize(s, session));
 
         private static void WriteToTxtFile(string filename, Session session) =>
