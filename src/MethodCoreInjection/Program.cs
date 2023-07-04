@@ -1,5 +1,4 @@
-﻿#define FP
-#define WITH_EXCEPTION_HANDLING
+﻿#define METHODS
 
 // Term "Method-Core Injection" coined by Ann Lewkowicz
 // http://www.annlewkowicz.com/2022/12/method-core-injection-c-pattern-for.html
@@ -35,10 +34,8 @@ namespace MethodCoreInjection
 #if WITH_EXCEPTION_HANDLING
             var handler = new IOExceptionHandler();
 
-            new JsonFileWriterWithExceptionHandling<Session> { ExceptionHandler =
- handler }.CreateNew("session.json", session);
-            new SessionTxtFileWriterWithExceptionHandling { ExceptionHandler =
- handler }.CreateNew("session.txt", session);
+            new JsonFileWriterWithExceptionHandling<Session, IOException> { ExceptionHandler = handler }.CreateNew("session.json", session);
+            new SessionTxtFileWriterWithExceptionHandling<IOException> { ExceptionHandler = handler }.CreateNew("session.txt", session);
 #else
             new JsonFileWriter<Session>().CreateNew("session.json", session);
             new SessionTxtFileWriter().CreateNew("session.txt", session);

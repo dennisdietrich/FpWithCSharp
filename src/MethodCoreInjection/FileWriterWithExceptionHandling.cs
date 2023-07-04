@@ -2,11 +2,11 @@
 
 namespace MethodCoreInjection;
 
-internal abstract class FileWriterWithExceptionHandling<T>
+internal abstract class FileWriterWithExceptionHandling<TCont, TEx> where TEx : Exception
 {
-    internal IExceptionHandler<IOException>? ExceptionHandler { get; init; }
+    internal IExceptionHandler<TEx>? ExceptionHandler { get; init; }
 
-    internal void CreateNew(string filename, T content)
+    internal void CreateNew(string filename, TCont content)
     {
         try
         {
@@ -14,23 +14,23 @@ internal abstract class FileWriterWithExceptionHandling<T>
             CreateNewImpl(fileStream, content);
             File.SetAttributes(filename, FileAttributes.ReadOnly);
         }
-        catch (IOException e) when (ExceptionHandler != null)
+        catch (TEx e) when (ExceptionHandler != null)
         {
             if (ExceptionHandler.Handle(e))
                 throw;
         }
     }
 
-    protected abstract void CreateNewImpl(FileStream fileStream, T session);
+    protected abstract void CreateNewImpl(FileStream fileStream, TCont session);
 }
 
-internal sealed class JsonFileWriterWithExceptionHandling<T> : FileWriterWithExceptionHandling<T>
+internal sealed class JsonFileWriterWithExceptionHandling<TCont, TEx> : FileWriterWithExceptionHandling<TCont, TEx> where TEx : Exception
 {
-    protected override void CreateNewImpl(FileStream fileStream, T session) =>
+    protected override void CreateNewImpl(FileStream fileStream, TCont session) =>
         JsonSerializer.Serialize(fileStream, session);
 }
 
-internal sealed class SessionTxtFileWriterWithExceptionHandling : FileWriterWithExceptionHandling<Session>
+internal sealed class SessionTxtFileWriterWithExceptionHandling<TEx> : FileWriterWithExceptionHandling<Session, TEx> where TEx : Exception
 {
     protected override void CreateNewImpl(FileStream fileStream, Session session)
     {
