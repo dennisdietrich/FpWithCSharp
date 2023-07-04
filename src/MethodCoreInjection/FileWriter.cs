@@ -14,9 +14,9 @@ namespace MethodCoreInjection
         protected abstract void CreateNewImpl(FileStream fileStream, T session);
     }
 
-    internal sealed class SessionJsonFileWriter : FileWriter<Session>
+    internal sealed class JsonFileWriter<T> : FileWriter<T>
     {
-        protected override void CreateNewImpl(FileStream fileStream, Session session) =>
+        protected override void CreateNewImpl(FileStream fileStream, T session) =>
             JsonSerializer.Serialize(fileStream, session);
     }
 

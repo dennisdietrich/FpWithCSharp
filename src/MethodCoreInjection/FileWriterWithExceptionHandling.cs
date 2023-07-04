@@ -24,9 +24,9 @@ internal abstract class FileWriterWithExceptionHandling<T>
     protected abstract void CreateNewImpl(FileStream fileStream, T session);
 }
 
-internal sealed class SessionJsonFileWriterWithExceptionHandling : FileWriterWithExceptionHandling<Session>
+internal sealed class JsonFileWriterWithExceptionHandling<T> : FileWriterWithExceptionHandling<T>
 {
-    protected override void CreateNewImpl(FileStream fileStream, Session session) =>
+    protected override void CreateNewImpl(FileStream fileStream, T session) =>
         JsonSerializer.Serialize(fileStream, session);
 }
 
