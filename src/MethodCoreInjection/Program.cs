@@ -15,17 +15,30 @@ namespace MethodCoreInjection
         internal static void Main()
         {
             var session = new Session("Dennis Dietrich", "So you think you know functions");
-#if METHODS || FP
+#if METHODS || (FP && !WITH_EXCEPTION_HANDLING)
             WriteToJsonFile("session.json", session);
             WriteToTxtFile("session.txt", session);
+#elif FP && WITH_EXCEPTION_HANDLING
+            var handler = (IOException e) =>
+            {
+                Console.WriteLine(e);
+                return false;
+            };
+            var writeToJsonFile = (string n, Session s) => WithExceptionHandler(() => WriteToJsonFile(n, s), handler);
+            var writeToTxtFile = (string n, Session s) => WithExceptionHandler(() => WriteToTxtFile(n, s), handler);
+
+            writeToJsonFile("session.json", session);
+            writeToTxtFile("session.txt", session);
 #endif
 
 #if TEMPLATE_METHOD_PATTERN
 #if WITH_EXCEPTION_HANDLING
             var handler = new IOExceptionHandler();
 
-            new JsonFileWriterWithExceptionHandling<Session> { ExceptionHandler = handler }.CreateNew("session.json", session);
-            new SessionTxtFileWriterWithExceptionHandling { ExceptionHandler = handler }.CreateNew("session.txt", session);
+            new JsonFileWriterWithExceptionHandling<Session> { ExceptionHandler =
+ handler }.CreateNew("session.json", session);
+            new SessionTxtFileWriterWithExceptionHandling { ExceptionHandler =
+ handler }.CreateNew("session.txt", session);
 #else
             new JsonFileWriter<Session>().CreateNew("session.json", session);
             new SessionTxtFileWriter().CreateNew("session.txt", session);
@@ -34,46 +47,19 @@ namespace MethodCoreInjection
         }
 
 #if FP
-#if WITH_EXCEPTION_HANDLING
-        private static void CreateNewFile(string filename, Action<FileStream> action, Func<IOException, bool>? handler = null)
+        private static void WithExceptionHandler<T>(Action action, Func<T, bool> handler) where T : Exception
         {
             try
             {
-                using var fileStream = new FileStream(filename, FileMode.CreateNew);
-                action(fileStream);
-                File.SetAttributes(filename, FileAttributes.ReadOnly);
+                action();
             }
-            catch (IOException e) when (handler != null)
+            catch (T e)
             {
                 if (handler(e))
                     throw;
             }
         }
 
-        private static void WriteToJsonFile<T>(string filename, T session) =>
-            CreateNewFile(
-                filename,
-                s => JsonSerializer.Serialize(s, session),
-                e =>
-                {
-                    Console.WriteLine(e);
-                    return false;
-                });
-
-        private static void WriteToTxtFile(string filename, Session session) =>
-            CreateNewFile(
-                filename,
-                s =>
-                {
-                    using var streamWriter = new StreamWriter(s);
-                    streamWriter.Write($"{session.Speaker}: {session.Title}");
-                },
-                e =>
-                {
-                    Console.WriteLine(e);
-                    return false;
-                });
-#else
         private static void CreateNewFile(string filename, Action<FileStream> action)
         {
             using var fileStream = new FileStream(filename, FileMode.CreateNew);
@@ -90,7 +76,6 @@ namespace MethodCoreInjection
                 using var streamWriter = new StreamWriter(s);
                 streamWriter.Write($"{session.Speaker}: {session.Title}");
             });
-#endif
 #endif
 
 #if METHODS
