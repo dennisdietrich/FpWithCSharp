@@ -3,14 +3,14 @@
     public class TimeGenerator : IGenerator<DateTime>
     {
         private readonly int _interval;
-        private DateTime _current;
+        private DateTime _next;
 
         public TimeGenerator(DateTime start, int interval)
         {
             if (interval < 1)
                 throw new ArgumentOutOfRangeException(nameof(interval), "Interval must be greater than zero.");
 
-            _current = start;
+            _next = start;
             _interval = interval;
         }
 
@@ -42,8 +42,18 @@
 
         public bool TryGetNext(out DateTime next)
         {
-            var current = _current;
-            _current = _current.AddSeconds(_interval);
+            var current = _next;
+
+            try
+            {
+                _next = _next.AddSeconds(_interval);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                next = default;
+                return false;
+            }
+
             next = current;
             return true;
         }
