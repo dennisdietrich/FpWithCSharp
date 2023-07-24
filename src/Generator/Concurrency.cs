@@ -1,8 +1,8 @@
 ﻿namespace Generator
 {
-    public static class FuncExtensions
+    public static class Concurrency
     {
-        public static Func<T> Synchronized<T>(this Func<T> func)
+        public static Func<T> Synchronized<T>(Func<T> func)
         {
             object syncRoot = new();
 

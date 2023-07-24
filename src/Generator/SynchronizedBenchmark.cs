@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using static Generator.Concurrency;
 
 namespace Generator
 {
@@ -16,7 +17,7 @@ namespace Generator
         public void IterationSetup()
         {
             _timesEnumerator = TimeGenerator.CreateEnumerable(_startTime, Interval).GetSynchronizedEnumerator();
-            _timesFunc = TimeGenerator.CreateFunction(_startTime, Interval).Synchronized();
+            _timesFunc = Synchronized(TimeGenerator.CreateFunction(_startTime, Interval));
         }
 
         [IterationCleanup]
@@ -26,7 +27,7 @@ namespace Generator
         public void SyncTimeEnumerator()
         {
             for (var i = 0; i < Iterations; i++)
-                _timesEnumerator.TryGetNext(out _);
+                _timesEnumerator.GetNext(out _);
         }
 
         [Benchmark]

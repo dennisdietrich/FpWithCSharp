@@ -40,7 +40,7 @@
             };
         }
 
-        public bool TryGetNext(out DateTime next)
+        public bool GetNext(out DateTime next)
         {
             var current = _next;
 

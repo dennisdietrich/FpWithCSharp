@@ -6,6 +6,7 @@
 
 using BenchmarkDotNet.Running;
 using Generator;
+using static Generator.Concurrency;
 
 const int iterations = 5;
 const int interval = 3;
@@ -13,13 +14,13 @@ var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
 
 #if ENUMERATOR
 {
-    Console.WriteLine($"Generating {iterations} times with {interval} seconds interval using enumerator implementation...");
+    Console.WriteLine($"Generating {iterations} times with {interval} seconds interval using generator implementation...");
 
 #if SYNCHRONIZED
     using ISynchronizedEnumerator<DateTime> times = TimeGenerator.CreateEnumerable(startTime, interval).GetSynchronizedEnumerator();
     for (var i = 0; i < iterations; i++)
     {
-        times.TryGetNext(out DateTime time);
+        times.GetNext(out DateTime time);
         Console.WriteLine($"{time:u}");
     }
 #else
@@ -44,7 +45,7 @@ var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
     IGenerator<DateTime> times = new TimeGenerator(startTime, interval).Synchronized();
     for (var i = 0; i < iterations; i++)
     {
-        times.TryGetNext(out DateTime time);
+        times.GetNext(out DateTime time);
         Console.WriteLine($"{time:u}");
     }
 #else
@@ -65,7 +66,7 @@ var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
     Console.WriteLine($"Generating {iterations} times with {interval} seconds interval using functional implementation...");
 
 #if SYNCHRONIZED
-    Func<DateTime> times = TimeGenerator.CreateFunction(startTime, interval).Synchronized();
+    Func<DateTime> times = Synchronized(TimeGenerator.CreateFunction(startTime, interval));
     for (var i = 0; i < iterations; i++)
         Console.WriteLine($"{times():u}");
 #else

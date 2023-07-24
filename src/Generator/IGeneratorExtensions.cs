@@ -11,10 +11,10 @@
 
             internal SynchronizedGenerator(IGenerator<T> target) => _target = target;
 
-            public bool TryGetNext(out T next)
+            public bool GetNext(out T next)
             {
                 lock (_syncRoot)
-                    return _target.TryGetNext(out next);
+                    return _target.GetNext(out next);
             }
         }
     }

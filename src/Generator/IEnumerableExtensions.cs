@@ -12,7 +12,7 @@
 
             internal SynchronizedEnumerator(IEnumerable<T> enumerable) => _enumerator = enumerable.GetEnumerator();
 
-            public bool TryGetNext(out T? nextValue)
+            public bool GetNext(out T? nextValue)
             {
                 lock (_syncRoot)
                 {

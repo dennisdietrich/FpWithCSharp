@@ -2,6 +2,6 @@
 {
     public interface IGenerator<T>
     {
-        public bool TryGetNext(out T next);
+        public bool GetNext(out T next);
     }
 }
