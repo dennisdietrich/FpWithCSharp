@@ -52,7 +52,7 @@ var startTime = new DateTime(2023, 01, 23, 20, 28, 0);
     IGenerator<DateTime> times = new TimeGenerator(startTime, interval);
     for (var i = 0; i < iterations; i++)
     {
-        times.TryGetNext(out DateTime time);
+        times.GetNext(out DateTime time);
         Console.WriteLine($"{time:u}");
     }
 #endif
