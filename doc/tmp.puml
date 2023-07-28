@@ -1,0 +1,21 @@
+@startuml
+
+hide circle
+hide sterotype
+skinparam classAttributeIconSize 0
+
+title Template Method Pattern
+
+abstract class Base {
+  +TemplateMethod()
+  {abstract} #Primitive1()
+  {abstract} #Primitive2()
+}
+
+class Concrete {
+  #Primitive1()
+  #Primitive2()
+}
+
+Base <|-- Concrete
+@enduml

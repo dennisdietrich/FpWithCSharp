@@ -1,0 +1,13 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# Private Visual Studio files
+.vs/
+
+# Private Rider/ReSharper files
+.idea/
+*.DotSettings.user
+
+# macOS Finder
+.DS_Store
